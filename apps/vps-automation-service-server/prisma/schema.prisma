@@ -1,0 +1,56 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DB_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model VpsConfiguration {
+  cpuCores  Int?
+  createdAt DateTime @default(now())
+  diskSpace Int?
+  id        String   @id @default(cuid())
+  osVersion String?
+  ramSize   Int?
+  updatedAt DateTime @updatedAt
+}
+
+model Deployment {
+  createdAt DateTime              @default(now())
+  endTime   DateTime?
+  id        String                @id @default(cuid())
+  log       String?
+  script    Script?               @relation(fields: [scriptId], references: [id])
+  scriptId  String?
+  startTime DateTime?
+  status    EnumDeploymentStatus?
+  updatedAt DateTime              @updatedAt
+}
+
+model ErrorNotification {
+  createdAt  DateTime  @default(now())
+  errorType  String?
+  id         String    @id @default(cuid())
+  isResolved Boolean?
+  message    String?
+  timestamp  DateTime?
+  updatedAt  DateTime  @updatedAt
+}
+
+model Script {
+  content      String?
+  createdAt    DateTime     @default(now())
+  creationDate DateTime?
+  deployments  Deployment[]
+  id           String       @id @default(cuid())
+  isActive     Boolean?
+  lastUpdated  DateTime?
+  name         String?
+  updatedAt    DateTime     @updatedAt
+}
+
+enum EnumDeploymentStatus {
+  Option1
+}
